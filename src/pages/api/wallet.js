@@ -9,7 +9,6 @@ export default async function handler(req, res) {
             break;
 
         default:
-            // nit: 400 (Bad request) rather than 403 (forbidden)
             res.status(400).json({ error: true, message: "Unsupported request" });
             break;
     }
@@ -19,14 +18,12 @@ async function handlePost(req, res) {
     const body = JSON.parse(req.body);
     const userId = body.userId;
     if (userId === null || userId === undefined) {
-        // nit: 400 (Bad request) rather than 403 (forbidden)
         res.status(400).json({ error: true, message: "Missing userId parameter" });
         return;
     }
 
     const created = await createWallets(userId);
     if (!created) {
-        // nit: 500 (Server error) rather than 403 (forbidden)
         res.status(500).json({ error: true, message: "Failed to create wallets for user" });
         return;
     }
@@ -43,7 +40,6 @@ async function handleGet(req, res) {
 
     const data = await findExistingWallets(userId);
     if (data.error) {
-        // nit: 400 (Bad request) rather than 403 (forbidden)
         res.status(400).json(data);
         return;
     }
@@ -61,7 +57,7 @@ async function handleGet(req, res) {
 }
 
 async function createWallets(userId) {
-    const url = `${process.env.NEXT_PUBLIC_CROSSMINT_BASEURL}/api/v1-alpha1/wallets`;
+    const url = `${process.env.CROSSMINT_BASEURL}/api/v1-alpha1/wallets`;
     const options = {
         method: "POST",
         headers: {
@@ -83,7 +79,7 @@ async function createWallets(userId) {
 }
 
 async function findExistingWallets(userId) {
-    const url = `${process.env.NEXT_PUBLIC_CROSSMINT_BASEURL}/api/v1-alpha1/wallets?userId=${userId}`;
+    const url = `${process.env.CROSSMINT_BASEURL}/api/v1-alpha1/wallets?userId=${userId}`;
     const options = {
         method: "GET",
         headers: {

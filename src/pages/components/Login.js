@@ -8,42 +8,42 @@ This component accepts style, config, and callbacks props. To learn more about p
 https://stytch.com/docs/sdks/javascript-sdk#ui-configs
 */
 const Login = () => {
-  const config = {
-    products: [Products.emailMagicLinks, Products.oauth],
-    emailMagicLinksOptions: {
-      loginRedirectURL: "http://localhost:3000",
-      loginExpirationMinutes: 60,
-      signupRedirectURL: "http://localhost:3000",
-      signupExpirationMinutes: 60,
-    },
-    oauthOptions: {
-      providers: [{ type: "google" }],
-      loginRedirectURL: "http://localhost:3000",
-      loginExpirationMinutes: 60,
-      signupRedirectURL: "http://localhost:3000",
-      signupExpirationMinutes: 60,
-    },
-  };
+    const config = {
+        products: [Products.emailMagicLinks, Products.oauth],
+        emailMagicLinksOptions: {
+            loginRedirectURL: "http://localhost:3000",
+            loginExpirationMinutes: 60,
+            signupRedirectURL: "http://localhost:3000",
+            signupExpirationMinutes: 60,
+        },
+        oauthOptions: {
+            providers: [{ type: "google" }],
+            loginRedirectURL: "http://localhost:3000",
+            loginExpirationMinutes: 60,
+            signupRedirectURL: "http://localhost:3000",
+            signupExpirationMinutes: 60,
+        },
+    };
 
-  return (
-    <div className={"login-container"}>
-      <div className={"stytch"}>
-        <StytchLogin config={config} styles={styles} />
-      </div>
-    </div>
-  );
+    return (
+        <div className={"login-container"}>
+            <div className={"stytch"}>
+                <StytchLogin config={config} styles={styles} />
+            </div>
+        </div>
+    );
 };
 
 const styles = {
-  container: {
-    width: "100%",
-  },
-  buttons: {
-    primary: {
-      backgroundColor: "#4A37BE",
-      borderColor: "#4A37BE",
+    container: {
+        width: "100%",
     },
-  },
+    buttons: {
+        primary: {
+            backgroundColor: "#4A37BE",
+            borderColor: "#4A37BE",
+        },
+    },
 };
 
 export default Login;

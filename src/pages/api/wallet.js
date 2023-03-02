@@ -9,22 +9,25 @@ export default async function handler(req, res) {
             break;
 
         default:
-            res.status(403).json({ error: true, message: "Unsupported request" });
+            // nit: 400 (Bad request) rather than 403 (forbidden)
+            res.status(400).json({ error: true, message: "Unsupported request" });
             break;
     }
 }
 
 async function handlePost(req, res) {
-    const body = JSON.parse(req.body)
+    const body = JSON.parse(req.body);
     const userId = body.userId;
     if (userId === null || userId === undefined) {
-        res.status(403).json({ error: true, message: "Missing userId parameter" });
+        // nit: 400 (Bad request) rather than 403 (forbidden)
+        res.status(400).json({ error: true, message: "Missing userId parameter" });
         return;
     }
 
     const created = await createWallets(userId);
     if (!created) {
-        res.status(403).json({ error: true, message: "Failed to create wallets for user" });
+        // nit: 500 (Server error) rather than 403 (forbidden)
+        res.status(500).json({ error: true, message: "Failed to create wallets for user" });
         return;
     }
 
@@ -40,18 +43,19 @@ async function handleGet(req, res) {
 
     const data = await findExistingWallets(userId);
     if (data.error) {
-        res.status(403).json(data);
+        // nit: 400 (Bad request) rather than 403 (forbidden)
+        res.status(400).json(data);
         return;
     }
 
-    let jsonData = { };
+    let jsonData = {};
 
     data.forEach((wallet) => {
         const chain = wallet.chain;
         const address = wallet.publicKey;
 
         jsonData[chain] = address;
-    })
+    });
 
     res.status(200).json(jsonData);
 }
@@ -59,21 +63,21 @@ async function handleGet(req, res) {
 async function createWallets(userId) {
     const url = `${process.env.NEXT_PUBLIC_CROSSMINT_BASEURL}/api/v1-alpha1/wallets`;
     const options = {
-        method: 'POST',
+        method: "POST",
         headers: {
-            accept: 'application/json',
-            'content-type': 'application/json',
-            'X-CLIENT-SECRET': process.env.NEXT_PUBLIC_X_CLIENT_SECRET,
-            'X-PROJECT-ID': process.env.NEXT_PUBLIC_X_PROJECT_ID
+            accept: "application/json",
+            "content-type": "application/json",
+            // let's remove `NEXT_PUBLIC` to ensure we're following our own safety procedures re: server-to-server comm only
+            "X-CLIENT-SECRET": process.env.X_CLIENT_SECRET,
+            "X-PROJECT-ID": process.env.X_PROJECT_ID,
         },
-        body: JSON.stringify({ chain: 'ethereum', userId: userId })
+        body: JSON.stringify({ chain: "ethereum", userId: userId }),
     };
 
     try {
         await fetch(url, options);
-        return true
-    }
-    catch (error) {
+        return true;
+    } catch (error) {
         return false;
     }
 }
@@ -81,19 +85,19 @@ async function createWallets(userId) {
 async function findExistingWallets(userId) {
     const url = `${process.env.NEXT_PUBLIC_CROSSMINT_BASEURL}/api/v1-alpha1/wallets?userId=${userId}`;
     const options = {
-        method: 'GET',
+        method: "GET",
         headers: {
-            accept: 'application/json',
-            'X-CLIENT-SECRET': process.env.NEXT_PUBLIC_X_CLIENT_SECRET,
-            'X-PROJECT-ID': process.env.NEXT_PUBLIC_X_PROJECT_ID
-        }
+            accept: "application/json",
+            // let's remove `NEXT_PUBLIC` to ensure we're following our own safety procedures re: server-to-server comm only
+            "X-CLIENT-SECRET": process.env.X_CLIENT_SECRET,
+            "X-PROJECT-ID": process.env.X_PROJECT_ID,
+        },
     };
 
     try {
         const response = await fetch(url, options);
         return await response.json();
-    }
-    catch (error) {
+    } catch (error) {
         return { error: true, message: "An internal error has occurred" };
     }
 }

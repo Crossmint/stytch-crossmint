@@ -1,5 +1,5 @@
 import { useStytch, useStytchSession, useStytchUser } from "@stytch/nextjs";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Profile = () => {
     async function getWallet(user) {
@@ -31,7 +31,7 @@ const Profile = () => {
         if (user != null) {
             getWallet(user);
         }
-    }, [user])
+    }, [user]);
 
     return (
         <>
@@ -41,12 +41,11 @@ const Profile = () => {
                         Log out
                     </button>
                 </div>
-
             </div>
             <div className="card">
                 <h2>Wallets</h2>
                 <pre className="code-block">
-                    <code>{JSON.stringify({...wallet}, null, 2)}</code>
+                    <code>{JSON.stringify({ ...wallet }, null, 2)}</code>
                 </pre>
             </div>
         </>

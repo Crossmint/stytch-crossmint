@@ -63,7 +63,6 @@ async function createWallets(userId) {
         headers: {
             accept: "application/json",
             "content-type": "application/json",
-            // let's remove `NEXT_PUBLIC` to ensure we're following our own safety procedures re: server-to-server comm only
             "X-CLIENT-SECRET": process.env.X_CLIENT_SECRET,
             "X-PROJECT-ID": process.env.X_PROJECT_ID,
         },
@@ -84,7 +83,6 @@ async function findExistingWallets(userId) {
         method: "GET",
         headers: {
             accept: "application/json",
-            // let's remove `NEXT_PUBLIC` to ensure we're following our own safety procedures re: server-to-server comm only
             "X-CLIENT-SECRET": process.env.X_CLIENT_SECRET,
             "X-PROJECT-ID": process.env.X_PROJECT_ID,
         },

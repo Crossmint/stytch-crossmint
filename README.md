@@ -85,3 +85,10 @@ yarn dev
 The application will be available at [`http://localhost:3000`](http://localhost:3000).
 
 You'll be able to login with Email Magic Links or Google OAuth and see your Stytch User object, Stytch Session, and see how logging out works.
+
+## Final result:
+#### Authentication page
+<img width="1407" alt="Screenshot 2023-03-03 at 9 21 10 AM" src="https://user-images.githubusercontent.com/113327185/222746723-1581ba00-8743-4d76-a571-3b771725ff94.png">
+
+#### Post-login page:
+<img width="1433" alt="Screenshot 2023-03-03 at 9 21 48 AM" src="https://user-images.githubusercontent.com/113327185/222746927-d675ad82-c5c4-4845-ab7b-502298619be0.png">

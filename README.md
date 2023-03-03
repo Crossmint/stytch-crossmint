@@ -86,6 +86,9 @@ The application will be available at [`http://localhost:3000`](http://localhost:
 
 You'll be able to login with Email Magic Links or Google OAuth and see your Stytch User object, Stytch Session, and see how logging out works.
 
+## Deploy via Vercel
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FCrossmint%2Fstytch-crossmint&env=NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN,CROSSMINT_X_CLIENT_SECRET,CROSSMINT_X_PROJECT_ID,CROSSMINT_BASEURL)
+
 ## Final result:
 #### Authentication page
 <img width="1407" alt="Screenshot 2023-03-03 at 9 21 10 AM" src="https://user-images.githubusercontent.com/113327185/222746723-1581ba00-8743-4d76-a571-3b771725ff94.png">

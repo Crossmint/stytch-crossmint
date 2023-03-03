@@ -9,7 +9,7 @@ export default async function handler(req, res) {
             break;
 
         default:
-            res.status(400).json({ error: true, message: "Unsupported request" });
+            res.status(400).json({ error: true, message: "Unsupported request method" });
             break;
     }
 }
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 async function handlePost(req, res) {
     const body = JSON.parse(req.body);
     const userId = body.userId;
-    if (userId === null || userId === undefined) {
+    if (userId == null) {
         res.status(400).json({ error: true, message: "Missing userId parameter" });
         return;
     }
@@ -33,8 +33,8 @@ async function handlePost(req, res) {
 
 async function handleGet(req, res) {
     const userId = req.query.userId;
-    if (userId === null || userId === undefined) {
-        res.status(403).json({ error: true, message: "Missing userId parameter" });
+    if (userId == null) {
+        res.status(400).json({ error: true, message: "Missing userId parameter" });
         return;
     }
 
@@ -63,8 +63,8 @@ async function createWallets(userId) {
         headers: {
             accept: "application/json",
             "content-type": "application/json",
-            "X-CLIENT-SECRET": process.env.X_CLIENT_SECRET,
-            "X-PROJECT-ID": process.env.X_PROJECT_ID,
+            "X-CLIENT-SECRET": process.env.CROSSMINT_X_CLIENT_SECRET,
+            "X-PROJECT-ID": process.env.CROSSMINT_X_PROJECT_ID,
         },
         body: JSON.stringify({ chain: "ethereum", userId: userId }),
     };
@@ -73,6 +73,7 @@ async function createWallets(userId) {
         await fetch(url, options);
         return true;
     } catch (error) {
+        console.error("Error whilst creating wallets", error);
         return false;
     }
 }
@@ -83,8 +84,8 @@ async function findExistingWallets(userId) {
         method: "GET",
         headers: {
             accept: "application/json",
-            "X-CLIENT-SECRET": process.env.X_CLIENT_SECRET,
-            "X-PROJECT-ID": process.env.X_PROJECT_ID,
+            "X-CLIENT-SECRET": process.env.CROSSMINT_X_CLIENT_SECRET,
+            "X-PROJECT-ID": process.env.CROSSMINT_X_PROJECT_ID,
         },
     };
 
@@ -92,6 +93,7 @@ async function findExistingWallets(userId) {
         const response = await fetch(url, options);
         return await response.json();
     } catch (error) {
+        console.error("Error whilst fetching wallets", error);
         return { error: true, message: "An internal error has occurred" };
     }
 }

@@ -1,5 +1,6 @@
 import { useStytch, useStytchSession, useStytchUser } from "@stytch/nextjs";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const Profile = () => {
     async function getWallet(user) {
@@ -37,9 +38,16 @@ const Profile = () => {
         <>
             <div className={""}>
                 <div className={"header"}>
-                    <button className="btn-logout" onClick={() => stytch.session.revoke()}>
-                        Log out
-                    </button>
+                    <div className={"btn-left"}>
+                        <Link href="/">
+                            <button>Panel</button>
+                        </Link>
+                        <Link href={"/Nfts?chain=ethereum&address=" + wallet.ethereum}>
+                            <button>NFTs</button>
+                        </Link>
+                    </div>
+
+                    <button className="btn-logout" onClick={() => stytch.session.revoke()}>Log out</button>
                 </div>
             </div>
             <div className="card">

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@crossmint/client-sdk-react-ui": "^0.2.7-alpha.7",
     "@stytch/nextjs": "^1.2.0",
     "@stytch/vanilla-js": "^0.9.5",
     "eslint": "8.35.0",

@@ -1,11 +1,28 @@
+import Cookies from "cookies";
+import loadStytch from "@/lib/loadStytch";
+
 export default async function handler(req, res) {
+    const cookies = new Cookies(req, res);
+    const storedSession = cookies.get('stytch_session');
+
+    // If session does not exist return an error
+    if (!storedSession) {
+        return res.status(400).json({ errorString: 'No session provided' });
+    }
+
+    const stytchClient = loadStytch();
+    // The `authenticate` function throws an error if the session is invalid
+    const { session } = await stytchClient.sessions.authenticate({ session_token: storedSession });
+
+    const userId = session.user_id;
+
     switch (req.method) {
         case "GET":
-            await handleGet(req, res);
+            await handleGet(userId, res);
             break;
 
         case "POST":
-            await handlePost(req, res);
+            await handlePost(userId, res);
             break;
 
         default:
@@ -14,14 +31,7 @@ export default async function handler(req, res) {
     }
 }
 
-async function handlePost(req, res) {
-    const body = JSON.parse(req.body);
-    const userId = body.userId;
-    if (userId == null) {
-        res.status(400).json({ error: true, message: "Missing userId parameter" });
-        return;
-    }
-
+async function handlePost(userId, res) {
     const created = await createWallets(userId);
     if (!created) {
         res.status(500).json({ error: true, message: "Failed to create wallets for user" });
@@ -31,13 +41,7 @@ async function handlePost(req, res) {
     return res.status(200).json({ error: false });
 }
 
-async function handleGet(req, res) {
-    const userId = req.query.userId;
-    if (userId == null) {
-        res.status(400).json({ error: true, message: "Missing userId parameter" });
-        return;
-    }
-
+async function handleGet(userId, res) {
     const data = await findExistingWallets(userId);
     if (data.error) {
         res.status(400).json(data);

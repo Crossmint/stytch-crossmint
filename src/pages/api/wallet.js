@@ -1,43 +1,47 @@
+import Cookies from "cookies";
+import loadStytch from "@/lib/loadStytch";
+
 export default async function handler(req, res) {
-    switch (req.method) {
-        case "GET":
-            await handleGet(req, res);
-            break;
+    const cookies = new Cookies(req, res);
+    const storedSession = cookies.get('stytch_session');
 
-        case "POST":
-            await handlePost(req, res);
-            break;
-
-        default:
-            res.status(400).json({ error: true, message: "Unsupported request method" });
-            break;
+    // If session does not exist return an error
+    if (!storedSession) {
+        return res.status(400).json({ errorString: 'No session provided' });
     }
+
+    const stytchClient = loadStytch();
+    // The `authenticate` function throws an error if the session is invalid
+    const { session } = await stytchClient.sessions.authenticate({ session_token: storedSession });
+
+    const userId = session.user_id;
+
+    const jsonResponse = await findOrCreateWallets(userId, res);
+    return res.status(200).json(jsonResponse);
 }
 
-async function handlePost(req, res) {
-    const body = JSON.parse(req.body);
-    const userId = body.userId;
-    if (userId == null) {
-        res.status(400).json({ error: true, message: "Missing userId parameter" });
-        return;
+async function findOrCreateWallets(userId) {
+    let walletsMap = {};
+
+    const existingWallets = await findExistingWallets(userId);
+    if (existingWallets.error) {
+        // An error on this API indicates that the user doesn't have an existing wallet(s)
+        const { chain, publicKey } = await createWallets(userId);
+        walletsMap[chain] = publicKey;
+        return walletsMap;
     }
 
-    const created = await createWallets(userId);
-    if (!created) {
-        res.status(500).json({ error: true, message: "Failed to create wallets for user" });
-        return;
-    }
+    existingWallets.forEach((wallet) => {
+        const chain = wallet.chain;
+        const address = wallet.publicKey;
 
-    return res.status(200).json({ error: false });
+        walletsMap[chain] = address;
+    });
+
+    return walletsMap;
 }
 
-async function handleGet(req, res) {
-    const userId = req.query.userId;
-    if (userId == null) {
-        res.status(400).json({ error: true, message: "Missing userId parameter" });
-        return;
-    }
-
+async function handleGet(userId, res) {
     const data = await findExistingWallets(userId);
     if (data.error) {
         res.status(400).json(data);
@@ -70,11 +74,10 @@ async function createWallets(userId) {
     };
 
     try {
-        await fetch(url, options);
-        return true;
+        const response = await fetch(url, options);
+        return await response.json();
     } catch (error) {
-        console.error("Error whilst creating wallets", error);
-        return false;
+        throw new Error("An internal error has occurred");
     }
 }
 

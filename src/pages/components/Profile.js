@@ -34,6 +34,11 @@ const Profile = () => {
         }
     }, [user]);
 
+    const logout = async () => {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        await stytch.session.revoke();
+    }
+
     return (
         <>
             <div className={""}>
@@ -47,7 +52,7 @@ const Profile = () => {
                         </Link>
                     </div>
 
-                    <button className="btn-logout" onClick={() => stytch.session.revoke()}>Log out</button>
+                    <button className="btn-logout" onClick={logout}>Log out</button>
                 </div>
             </div>
             <div className="card">

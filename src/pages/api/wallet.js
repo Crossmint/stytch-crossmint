@@ -16,29 +16,29 @@ export default async function handler(req, res) {
 
     const userId = session.user_id;
 
-    switch (req.method) {
-        case "GET":
-            await handleGet(userId, res);
-            break;
-
-        case "POST":
-            await handlePost(userId, res);
-            break;
-
-        default:
-            res.status(400).json({ error: true, message: "Unsupported request method" });
-            break;
-    }
+    const jsonResponse = await findOrCreateWallets(userId, res);
+    return res.status(200).json(jsonResponse);
 }
 
-async function handlePost(userId, res) {
-    const created = await createWallets(userId);
-    if (!created) {
-        res.status(500).json({ error: true, message: "Failed to create wallets for user" });
-        return;
+async function findOrCreateWallets(userId) {
+    let walletsMap = {};
+
+    const existingWallets = await findExistingWallets(userId);
+    if (existingWallets.error) {
+        // An error on this API indicates that the user doesn't have an existing wallet(s)
+        const { chain, publicKey } = await createWallets(userId);
+        walletsMap[chain] = publicKey;
+        return walletsMap;
     }
 
-    return res.status(200).json({ error: false });
+    existingWallets.forEach((wallet) => {
+        const chain = wallet.chain;
+        const address = wallet.publicKey;
+
+        walletsMap[chain] = address;
+    });
+
+    return walletsMap;
 }
 
 async function handleGet(userId, res) {
@@ -74,11 +74,10 @@ async function createWallets(userId) {
     };
 
     try {
-        await fetch(url, options);
-        return true;
+        const response = await fetch(url, options);
+        return await response.json();
     } catch (error) {
-        console.error("Error whilst creating wallets", error);
-        return false;
+        throw new Error("An internal error has occurred");
     }
 }
 

@@ -33,8 +33,7 @@ async function authenticate(stytch, user) {
     }
 
     // If a token is found, authenticate it with the appropriate method
-    const authResponse = await getAuthResponse(stytch, token, tokenType);
-    await createWallets(authResponse);
+    await getAuthResponse(stytch, token, tokenType);
 }
 
 async function getAuthResponse(stytch, token, tokenType) {
@@ -45,15 +44,6 @@ async function getAuthResponse(stytch, token, tokenType) {
             return stytch.oauth.authenticate(token, { session_duration_minutes: 60 });
         default:
             throw new Error("Invalid token type.");
-    }
-}
-
-async function createWallets(authResponse) {
-    const response = await fetch("/api/wallet", { method: "POST" });
-    const json = await response.json();
-    if (json.error) {
-        // An error has occurred while attempting to create your wallets
-        throw new Error("An error has occurred");
     }
 }
 

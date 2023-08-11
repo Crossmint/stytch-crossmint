@@ -31,7 +31,7 @@ Create in under 5 minutes a fully functional user account system, with magic lin
 
  <img width="400" alt="OAuth configuration" src="https://user-images.githubusercontent.com/100632220/217055674-a7dafc17-6ad3-492f-8dd2-92560d60dc00.png">
 
-5. Finally, navigate to [API Keys](https://stytch.com/dashboard/api-keys), and copy your `public_token`. You will need this value later on.
+5. Finally, navigate to [API Keys](https://stytch.com/dashboard/api-keys), and copy your `public_token`, `STYTCH_PROJECT_ID`, and `STYTCH_SECRET`. You will need this value later on.
 
 ### On your machine
 
@@ -76,7 +76,7 @@ Please note: make sure the clent secret doesn't get leaked, as it would allow ot
 
 ## Running locally
 
-After completing all the set up steps above the application can be run with the command:
+After completing the setup steps above the application can be run with the command:
 
 ```bash
 yarn dev
